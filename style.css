@@ -68,7 +68,6 @@ border:0px dotted #756140;border-radius:2px;padding:5px;
 box-shadow: 1px 1px 5px #756140;
 }
 
-
 h3.widget-title {
 padding: 12px 0;
 font-size: 11px;
@@ -117,7 +116,6 @@ div#access {border: 1px dotted #e3e3e3; border-width:1px 0px; padding:0px;}
 .nav-bar li{ border-bottom:1px solid #ccc;}
   }
 
-  
 /* IMAGES - straight from WordPress */
 
 /*
@@ -147,8 +145,6 @@ img.alignleft,img.alignright,img.aligncenter {margin-bottom: 12px;}
 .gallery img {border: 10px solid #f1f1f1;}
 .gallery br+br {display: none;}
 #content .attachment img {/* single attachment images should be centered */display: block;margin: 0 auto;}
-
-
 
 /* COLOUR SCHEME */
 
