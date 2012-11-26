@@ -52,7 +52,7 @@ div#header{margin-top:20px;}
 .entry-title {margin-top:0px;line-height:100%}
 .entry-content ol li{margin: 10px 0 0 0;list-style-type: decimal;line-height: 1.3em;list-style-position: outside;}
 .entry-content ul li{margin: 10px 0 0 0;list-style-position: outside;line-height: 1.3em;}
-.entry-content ol,.entry-content ul{margin: 0 0 30px 10px;}
+.entry-content ol,.entry-content ul{margin: 0 0 30px 30px;}
 .post .date_over {margin-bottom:2px;}
 .archive div.post {margin-bottom:40px;} /*add space underneath each item on an archive page*/
 
