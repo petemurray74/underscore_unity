@@ -49,6 +49,19 @@ function unity_setup() {
 	}
 endif; // unity_setup
 
+/************* REMOVE HEADER FLUFF *****************/
+
+
+remove_action( 'wp_head', 'feed_links_extra', 3 ); // Display the links to the extra feeds such as category feeds
+remove_action( 'wp_head', 'feed_links', 2 ); // Display the links to the general feeds: Post and Comment Feed
+remove_action( 'wp_head', 'rsd_link' ); // Display the link to the Really Simple Discovery service endpoint, EditURI link
+remove_action( 'wp_head', 'wlwmanifest_link' ); // Display the link to the Windows Live Writer manifest file.
+remove_action( 'wp_head', 'index_rel_link' ); // index link
+remove_action( 'wp_head', 'parent_post_rel_link', 10, 0 ); // prev link
+remove_action( 'wp_head', 'start_post_rel_link', 10, 0 ); // start link
+remove_action( 'wp_head', 'adjacent_posts_rel_link', 10, 0 ); // Display relational links for the posts adjacent to the current post.
+remove_action( 'wp_head', 'wp_generator' ); // Display the XHTML generator that is generated on the wp_head hook, WP version
+
 
 /************* ENQUEUE CSS AND JS *****************/
 
@@ -172,6 +185,27 @@ function unity_widgets_init() {
 		'after_title' => '</h3>',
 	) );
 
+	if ( function_exists('register_sidebar') )
+	register_sidebar(array(
+	'name'=>'FooterSidebar1',
+	'id' => 'footer-sidebar-1',
+	'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+	'after_widget' => '</li>',
+	'before_title' => '<h3 class="footer-widget-title">',
+	'after_title' => '</h3>',
+	));
+	
+	register_sidebar(array(
+	'name'=>'FooterSidebar2',
+	'id' => 'footer-sidebar-2',
+	'before_widget' => '<li id="%1$s" class="widget-container %2$s">',
+	'after_widget' => '</li>',
+	'before_title' => '<h3 class="footer-widget-title">',
+	'after_title' => '</h3>',
+	));
+	
+	
+
 }
 /** Register sidebars by running unity_widgets_init() on the widgets_init hook. */
 add_action( 'widgets_init', 'unity_widgets_init' );
@@ -272,5 +306,38 @@ class description_walker extends Walker_Nav_Menu
             }       
 }
 
+
+/**------------ IMAGE CAPTIONS ------------------**/
+
+add_filter('img_caption_shortcode', 'my_img_caption_shortcode_filter',10,3);
+
+/**
+ * Filter to replace the [caption] shortcode text with HTML5 compliant code
+ *
+ * @return text HTML content describing embedded figure
+ **/
+function my_img_caption_shortcode_filter($val, $attr, $content = null)
+{
+	extract(shortcode_atts(array(
+		'id'	=> '',
+		'align'	=> '',
+		'width'	=> '',
+		'caption' => ''
+	), $attr));
+	
+	if ( 1 > (int) $width || empty($caption) )
+		return $val;
+
+	$capid = '';
+	if ( $id ) {
+		$id = esc_attr($id);
+		$capid = 'id="figcaption_'. $id . '" ';
+		$id = 'id="' . $id . '" aria-labelledby="figcaption_' . $id . '" ';
+	}
+
+	return '<figure ' . $id . 'class="wp-caption ' . esc_attr($align) . '" zstyle="width: '
+	. (10 + (int) $width) . 'px">' . do_shortcode( $content ) . '<figcaption ' . $capid 
+	. 'class="wp-caption-text">' . $caption . '</figcaption></figure>';
+}
 
 ?>

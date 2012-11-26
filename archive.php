@@ -12,7 +12,7 @@ get_header(); ?>
 
 
 	<div id="content" class="row" role="main">
-		<section id="primary" class="content-area">
+		<section id="primary" class="content-area archive">
 			<div class="eight columns">	
 			<?php if ( have_posts() ) : ?>
 

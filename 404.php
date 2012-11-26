@@ -20,9 +20,7 @@ get_header(); ?>
 				</header><!-- .entry-header -->
 
 				<div class="entry-content">
-					<p><?php _e( 'It looks like nothing was found at this location.', 'unity' ); ?></p>
-
-
+					<p><?php _e( 'It looks like nothing was found at this location. Try the <a href="/" title="back home">home page</a>', 'unity' ); ?></p>
 				</div><!-- .entry-content -->
 			</article><!-- #post-0 .post .error404 .not-found -->
 

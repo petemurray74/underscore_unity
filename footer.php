@@ -3,14 +3,12 @@
 	<footer id="colophon" class="site-footer" role="contentinfo">
 		<div id="footer" class="row">
 			<div class="four columns">
-			<p>
-			Footer
-			</p>
+				<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('FooterSidebar1') ) : ?>
+				<?php endif; ?>
 			</div>
 			<div class="four columns end">
-			<p>
-			Footer
-			</p>
+				<?php if ( !function_exists('dynamic_sidebar') || !dynamic_sidebar('FooterSidebar2') ) : ?>
+				<?php endif; ?>
 			</div>		
 		</div><!-- #footer -->
 	</footer><!-- .site-footer -->	

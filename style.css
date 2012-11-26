@@ -13,31 +13,32 @@ License URI: LICENSE
 
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, p, blockquote, th, td {font-family: 'Lato', sans-serif;line-height:130%;}
 
-h1 { font-size: 34px; }
-h2 { font-size: 28px; }
-h3 { font-size: 23px; }
+h1 { font-size: 34px; letter-spacing:-2px;}
+h2 { font-size: 28px; letter-spacing:-1px; }
+h3 { font-size: 23px; letter-spacing:-1px; }
 h4 { font-size: 19px; }
 h5 { font-size: 15px; }
 h6 { font-size: 13px; }
+p { font-size: 15px; line-height:140%}
+table thead tr th, table tfoot tr th, table tbody tr td, table tr td, table tfoot tr td {font-size: 15px;}
 
-div#blog-title { font-size: 40px; font-weight:900;letter-spacing: -2px; }
-#blog-description h2 { font-size: 24px; font-weight:400;letter-spacing: -1px; }
 
-h3.widget-title {
-text-transform:uppercase;
-font-size:14px;
-font-weight:bold;
-text-shadow: 0px 1px 0px #fff;
-margin-top:5px;
-margin-bottom:5px;
+/* STRUCTURE */
+div.row {padding-left:15px;padding-right:15px;}
+div#wrapper{margin-top:30px;margin-bottom:30px}
+
+#wrapper{
+	-moz-box-shadow: 0 2px 6px rgba( 100, 100, 100, .3);
+	-webkit-box-shadow: 0 2px 6px rgba( 100, 100, 100, .3);
+	box-shadow: 0 2px 6px rgba( 100, 100, 100, .3);
 }
 
-
-
 /* HEADER */
+
+div#blog-title { font-size: 40px; font-weight:900;letter-spacing: -2px; }
+#blog-description h2 { font-size: 24px; font-weight:400;letter-spacing: -1px;margin-top:0px; }
 .header-img img {float:right;}
 div#header{margin-top:20px;}
-#blog-description h2 { margin-top:0px; }
 
 /* Text meant only for screen readers */
 .assistive-text {
@@ -49,10 +50,11 @@ div#header{margin-top:20px;}
 /* CONTENT AREA */
 
 .entry-title {margin-top:0px;line-height:100%}
-.entry-content ol li,{margin: 10px 0 0 0;list-style-type: decimal;list-style-position: outside;}
-.entry-content ul li,{margin: 10px 0 0 0;list-style-position: outside;}
-.entry-content ol,.entry-content ul{margin: 0 0 10px 10px;line-height: 1.8em;}
+.entry-content ol li{margin: 10px 0 0 0;list-style-type: decimal;line-height: 1.3em;list-style-position: outside;}
+.entry-content ul li{margin: 10px 0 0 0;list-style-position: outside;line-height: 1.3em;}
+.entry-content ol,.entry-content ul{margin: 0 0 30px 10px;}
 .post .date_over {margin-bottom:2px;}
+.archive div.post {margin-bottom:40px;} /*add space underneath each item on an archive page*/
 
 
 /* SIDEBARS and WIDGETS */
@@ -67,13 +69,34 @@ box-shadow: 1px 1px 5px #756140;
 }
 
 
+h3.widget-title {
+padding: 12px 0;
+font-size: 11px;
+font-family: Helvetica, Arial, sans-serif;
+font-weight: normal;
+letter-spacing: .1em;
+text-transform: uppercase;
+border-bottom: 1px solid #eee;
+border-top: 1px solid #eee;
+text-transform:uppercase;
+text-shadow: 0px 1px 0px #fff;
+margin-top:5px;
+margin-bottom:5px;
+color:#c00;
+}
+
+.widget-area ul li.widget-container ul {
+margin: 15px 0 0 20px;
+font-size: 1.2em;
+}
+
 /* STRUCTURAL */
 
 div.gap {padding-top:10px;padding-bottom:10px; }
 .gap hr{border-top: 1px dotted #e3e3e3;}
 
 /* NAV BAR */
-div#access {border: 1px dotted #e3e3e3; border-width:1px 0px; padding-right:0px;}
+div#access {border: 1px dotted #e3e3e3; border-width:1px 0px; padding:0px;}
 .nav-bar, .nav-bar ul {margin:0px;}
 .nav-bar { padding: 0; }
 .nav-bar > li { border: 1px; border-right: none; line-height: 40px;}
@@ -124,3 +147,44 @@ img.alignleft,img.alignright,img.aligncenter {margin-bottom: 12px;}
 .gallery img {border: 10px solid #f1f1f1;}
 .gallery br+br {display: none;}
 #content .attachment img {/* single attachment images should be centered */display: block;margin: 0 auto;}
+
+
+
+/* COLOUR SCHEME */
+
+body{color:#333;background:#eee url(images/body_bk.png)}
+
+a,a:link{color:#2BA6CB;}
+a:hover{text-decoration:underline;}
+
+div#blog-title{color:#444;}
+div#blog-description h2{color:#777;}
+div.row{background-color:#fff;}
+.gap hr {border-top: 3px solid #c00;}
+
+.widget-container a{color:#333;} 
+h3.widget-title{color:#000;}
+.nav-bar{background:#fff;}
+.nav-bar{
+background: rgb(247,247,247);
+background: -moz-linear-gradient(top,  rgba(247,247,247,1) 0%, rgba(255,255,255,1) 100%);
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(247,247,247,1)), color-stop(100%,rgba(255,255,255,1)));
+background: -webkit-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(255,255,255,1) 100%);
+background: -o-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(255,255,255,1) 100%);
+background: -ms-linear-gradient(top,  rgba(247,247,247,1) 0%,rgba(255,255,255,1) 100%);
+background: linear-gradient(to bottom,  rgba(247,247,247,1) 0%,rgba(255,255,255,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#ffffff',GradientType=0 );
+}
+
+.nav-bar > li > a { color: #666; border-right:1px solid #f7f7f7;}
+.nav-bar > li.active { background: #f9f9f9;box-shadow: 0px 1px 0px #c00;-webkit-box-shadow: 0px 1px 0px #c00;-moz-box-shadow: 0px 1px 0px #c00 }
+.nav-bar > li.active:hover { color: #999; background:#f9f9f9;}
+.nav-bar > li.active > a {color:#333;}
+.nav-bar > li a:hover { color: #999; }
+.nav-bar > li:hover { background: none; }
+
+.flyout {background: #f2f2f2;}
+.flyout li a, .nav-bar li ul li a { background: #f9f9f9;color: #333}
+.flyout li.active a, .nav-bar li ul li.active a { background: #f9f9f9; color: #999;cursor:default;}
+.flyout li a:hover, .nav-bar li ul li a:hover { background: #f1f1f1; color: #333;}
+.flyout li.active a:hover, .nav-bar li ul li.active a:hover { color:#999;background: #f9f9f9; }
