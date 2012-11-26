@@ -95,5 +95,6 @@
 			</div>	
 			</nav><!-- .site-navigation .main-navigation -->
 		</div><!--end header-->
+		</header>
 		<div class="row"><div class="twelve columns gap"></div></div>
 		<div id="main">
