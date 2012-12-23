@@ -313,7 +313,7 @@ add_filter('img_caption_shortcode', 'my_img_caption_shortcode_filter',10,3);
 
 /**
  * Filter to replace the [caption] shortcode text with HTML5 compliant code
- *
+ * and also remove inline captio width style
  * @return text HTML content describing embedded figure
  **/
 function my_img_caption_shortcode_filter($val, $attr, $content = null)
@@ -335,9 +335,11 @@ function my_img_caption_shortcode_filter($val, $attr, $content = null)
 		$id = 'id="' . $id . '" aria-labelledby="figcaption_' . $id . '" ';
 	}
 
-	return '<figure ' . $id . 'class="wp-caption ' . esc_attr($align) . '" zstyle="width: '
+	return '<figure ' . $id . 'class="wp-caption ' . esc_attr($align) . '" style="width: '
 	. (10 + (int) $width) . 'px">' . do_shortcode( $content ) . '<figcaption ' . $capid 
 	. 'class="wp-caption-text">' . $caption . '</figcaption></figure>';
 }
+
+
 
 ?>

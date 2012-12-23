@@ -129,8 +129,11 @@ img.size-auto,img.size-full,img.size-large,img.size-medium,.attachment img {max-
 .alignright,img.alignright {display: inline;float: right;margin-left: 24px;margin-top: 4px;}
 .aligncenter,img.aligncenter {clear: both;display: block;margin-left: auto;margin-right: auto;}
 img.alignleft,img.alignright,img.aligncenter {margin-bottom: 12px;}
-.wp-caption {background: #f1f1f1;line-height: 18px;margin-bottom: 20px;max-width: 632px !important; /* prevent too-wide images from breaking layout */padding: 4px;text-align: center;}
-.wp-caption img {margin: 5px 5px 0;}
+.wp-caption {background: #f1f1f1;line-height: 18px;margin-bottom: 20px; padding: 4px;text-align: center;}
+.wp-caption img {margin: 5px 0px 0px 0px;}
+/*captions and images resize */
+.wp-caption,.wp-caption-text {max-width: 100%;height: auto;width: auto; /* ie8 */}
+.wp-caption img {max-width: 100%;}
 .wp-caption p.wp-caption-text {color: #888;font-size: 12px;margin: 5px;}
 .wp-smiley {margin: 0;}
 .gallery {margin: 0 auto 18px;}
