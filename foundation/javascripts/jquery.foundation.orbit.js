@@ -9,7 +9,7 @@
 
 (function ($) {
   'use strict';
-  
+
   $.fn.findFirstImage = function () {
     return this.first()
             .find('img')
@@ -21,26 +21,30 @@
 
     defaults: {
       animation: 'horizontal-push',     // fade, horizontal-slide, vertical-slide, horizontal-push, vertical-push
-      animationSpeed: 600,        // how fast animtions are
-      timer: true,            // true or false to have the timer
-      advanceSpeed: 4000,         // if timer is enabled, time between transitions
-      pauseOnHover: false,        // if you hover pauses the slider
-      startClockOnMouseOut: false,    // if clock should start on MouseOut
+      animationSpeed: 600,              // how fast animations are
+      timer: true,                      // display timer?
+      advanceSpeed: 4000,               // if timer is enabled, time between transitions
+      pauseOnHover: false,              // if you hover pauses the slider
+      startClockOnMouseOut: false,      // if clock should start on MouseOut
       startClockOnMouseOutAfter: 1000,  // how long after MouseOut should the timer start again
-      directionalNav: true,         // manual advancing directional navs
+      directionalNav: true,             // manual advancing directional navs
       directionalNavRightText: 'Right', // text of right directional element for accessibility
-      directionalNavLeftText: 'Left', // text of left directional element for accessibility
-      captions: true,           // do you want captions?
-      captionAnimation: 'fade',       // fade, slideOpen, none
-      captionAnimationSpeed: 600,     // if so how quickly should they animate in
-      resetTimerOnClick: false,      // true resets the timer instead of pausing slideshow progress on manual navigation
-      bullets: false,           // true or false to activate the bullet navigation
-      bulletThumbs: false,        // thumbnails for the bullets
-      bulletThumbLocation: '',      // location from this file where thumbs will be
-      afterSlideChange: $.noop,   // empty function
-      afterLoadComplete: $.noop, //callback to execute after everything has been loaded
+      directionalNavLeftText: 'Left',   // text of left directional element for accessibility
+      captions: true,                   // do you want captions?
+      captionAnimation: 'fade',         // fade, slideOpen, none
+      captionAnimationSpeed: 600,       // if so how quickly should they animate in
+      resetTimerOnClick: false,         // true resets the timer instead of pausing slideshow progress on manual navigation
+      bullets: false,                   // true or false to activate the bullet navigation
+      bulletThumbs: false,              // thumbnails for the bullets
+      bulletThumbLocation: '',          // relative path to thumbnails from this file
+      bulletThumbsHideOnSmall: true,	// hide thumbs on small devices
+      afterSlideChange: $.noop,         // callback to execute after slide changes
+      afterLoadComplete: $.noop,        // callback to execute after everything has been loaded
       fluid: true,
-      centerBullets: true    // center bullet nav with js, turn this off if you want to position the bullet nav manually
+      centerBullets: true,              // center bullet nav with js, turn this off if you want to position the bullet nav manually
+      singleCycle: false,               // cycles through orbit slides only once
+      slideNumber: false,               // display slide numbers?
+      stackOnSmall: false               // stack slides on small devices (i.e. phones)
     },
 
     activeSlide: 0,
@@ -53,8 +57,9 @@
     wrapperHTML: '<div class="orbit-wrapper" />',
     timerHTML: '<div class="timer"><span class="mask"><span class="rotator"></span></span><span class="pause"></span></div>',
     captionHTML: '<div class="orbit-caption"></div>',
-    directionalNavHTML: '<div class="slider-nav"><span class="right"></span><span class="left"></span></div>',
+    directionalNavHTML: '<div class="slider-nav hide-for-small"><span class="right"></span><span class="left"></span></div>',
     bulletHTML: '<ul class="orbit-bullets"></ul>',
+    slideNumberHTML: '<span class="orbit-slide-counter"></span>',
 
     init: function (element, options) {
       var $imageSlides,
@@ -77,14 +82,31 @@
 
       this.$element = $(element);
       this.$wrapper = this.$element.wrap(this.wrapperHTML).parent();
-      this.$slides = this.$element.children('img, a, div');
-      
+      this.$slides = this.$element.children('img, a, div, figure, li');
+
+      this.$element.on('movestart', function(e) {
+        // If the movestart is heading off in an upwards or downwards
+        // direction, prevent it so that the browser scrolls normally.
+        if ((e.distX > e.distY && e.distX < -e.distY) ||
+            (e.distX < e.distY && e.distX > -e.distY)) {
+          e.preventDefault();
+        }
+      });
+
       this.$element.bind('orbit.next', function () {
         self.shift('next');
       });
 
       this.$element.bind('orbit.prev', function () {
         self.shift('prev');
+      });
+
+      this.$element.bind('swipeleft', function () {
+        $(this).trigger('orbit.next');
+      });
+
+      this.$element.bind('swiperight', function () {
+        $(this).trigger('orbit.prev');
       });
 
       this.$element.bind('orbit.goto', function (event, index) {
@@ -117,12 +139,17 @@
       this.$element
         .addClass('orbit')
         .css({width: '1px', height: '1px'});
-      
-      this.$slides.addClass('orbit-slide');
+
+      if (this.options.stackOnSmall) {
+        this.$element.addClass('orbit-stack-on-small');
+      }
+
+      this.$slides.addClass('orbit-slide').css({"opacity" : 0});
 
       this.setDimentionsFromLargestSlide();
       this.updateOptionsIfOnlyOneSlide();
       this.setupFirstSlide();
+      this.notifySlideChange();
 
       if (this.options.timer) {
         this.setupTimer();
@@ -150,11 +177,25 @@
       return this.$slides.eq(this.activeSlide);
     },
 
+    notifySlideChange: function() {
+      if (this.options.slideNumber) {
+        var txt = (this.activeSlide+1) + ' of ' + this.$slides.length;
+        this.$element.trigger("orbit.change", {slideIndex: this.activeSlide, slideCount: this.$slides.length});
+        if (this.$counter === undefined) {
+          var $counter = $(this.slideNumberHTML).html(txt);
+          this.$counter = $counter;
+          this.$wrapper.append(this.$counter);
+        } else {
+          this.$counter.html(txt);
+        }
+      }
+    },
+
     setDimentionsFromLargestSlide: function () {
       //Collect all slides and set slider size of largest image
       var self = this,
           $fluidPlaceholder;
-      
+
       self.$element.add(self.$wrapper).width(this.$slides.first().outerWidth());
       self.$element.add(self.$wrapper).height(this.$slides.first().height());
       self.orbitWidth = this.$slides.first().outerWidth();
@@ -186,11 +227,11 @@
           //var inner = $("<div/>").css({"display":"inline-block", "width":"2px", "height":"2px"});
           //$fluidPlaceholder = $("<div/>").css({"float":"left"});
           //$fluidPlaceholder.wrapInner(inner);
-          
+
           //$fluidPlaceholder = $("<div/>").css({"height":"1px", "width":"2px"});
           //$fluidPlaceholder = $("<div style='display:inline-block;width:2px;height:1px;'></div>");
         }
-        
+
         self.$element.prepend($fluidPlaceholder);
         $fluidPlaceholder.addClass('fluid-placeholder');
         self.$element.add(self.$wrapper).css({width: 'inherit'});
@@ -224,7 +265,7 @@
       //Set initial front photo z-index and fades it in
       var self = this;
       this.$slides.first()
-        .css({"z-index" : 3})
+        .css({"z-index" : 3, "opacity" : 1})
         .fadeIn(function() {
           //brings in all other slides IF css declares a display: none
           self.$slides.css({"display":"block"})
@@ -258,11 +299,16 @@
         "-o-transform": degreeCSS,
         "-ms-transform": degreeCSS
       });
+      if (reset) {
+        this.degrees = 0;
+        this.$rotator.removeClass('move');
+        this.$mask.removeClass('move');
+      }
       if(this.degrees > 180) {
         this.$rotator.addClass('move');
         this.$mask.addClass('move');
       }
-      if(this.degrees > 360 || reset) {
+      if(this.degrees > 360) {
         this.$rotator.removeClass('move');
         this.$mask.removeClass('move');
         this.degrees = 0;
@@ -342,7 +388,12 @@
         if ($.trim($(captionLocation).text()).length < 1){
           return false;
         }
-        captionHTML = $(captionLocation).html(); //get HTML from the matching HTML entity
+        
+        // if location selector starts with '#', remove it so we don't see id="#selector"
+        if (captionLocation.charAt(0) == '#') {
+            captionLocation = captionLocation.substring(1, captionLocation.length);
+        }
+        captionHTML = $('#' + captionLocation).html(); //get HTML from the matching HTML entity
         this.$caption
           .attr('id', captionLocation) // Add ID caption TODO why is the id being set?
           .html(captionHTML); // Change HTML in Caption
@@ -408,6 +459,7 @@
       this.$slides.each(this.addBullet);
       this.$element.addClass('with-bullets');
       if (this.options.centerBullets) this.$bullets.css('margin-left', -this.$bullets.outerWidth() / 2);
+      if (this.options.bulletThumbsHideOnSmall) this.$bullets.addClass('hide-for-small');
     },
 
     addBullet: function (index, slide) {
@@ -487,6 +539,7 @@
 
         //set to correct bullet
         this.setActiveBullet();
+        this.notifySlideChange();
 
         //set previous slide z-index to one below what new activeSlide will be
         this.$slides
@@ -499,6 +552,9 @@
             .eq(this.activeSlide)
             .css({"opacity" : 0, "z-index" : 3})
             .animate({"opacity" : 1}, this.options.animationSpeed, this.resetAndUnlock);
+          this.$slides
+              .eq(this.prevActiveSlide)
+              .animate({"opacity":0}, this.options.animationSpeed);
         }
 
         //horizontal-slide
@@ -507,14 +563,19 @@
             this.$slides
               .eq(this.activeSlide)
               .css({"left": this.orbitWidth, "z-index" : 3})
+              .css("opacity", 1)
               .animate({"left" : 0}, this.options.animationSpeed, this.resetAndUnlock);
           }
           if (slideDirection == "prev") {
             this.$slides
               .eq(this.activeSlide)
               .css({"left": -this.orbitWidth, "z-index" : 3})
+              .css("opacity", 1)
               .animate({"left" : 0}, this.options.animationSpeed, this.resetAndUnlock);
           }
+          this.$slides
+              .eq(this.prevActiveSlide)
+              .css("opacity", 0);
         }
 
         //vertical-slide
@@ -523,14 +584,22 @@
             this.$slides
               .eq(this.activeSlide)
               .css({"top": this.orbitHeight, "z-index" : 3})
+              .css("opacity", 1)
               .animate({"top" : 0}, this.options.animationSpeed, this.resetAndUnlock);
+            this.$slides
+              .eq(this.prevActiveSlide)
+              .css("opacity", 0);
           }
           if (slideDirection == "next") {
             this.$slides
               .eq(this.activeSlide)
               .css({"top": -this.orbitHeight, "z-index" : 3})
+              .css("opacity", 1)
               .animate({"top" : 0}, this.options.animationSpeed, this.resetAndUnlock);
           }
+          this.$slides
+              .eq(this.prevActiveSlide)
+              .css("opacity", 0);
         }
 
         //horizontal-push
@@ -539,19 +608,23 @@
             this.$slides
               .eq(this.activeSlide)
               .css({"left": this.orbitWidth, "z-index" : 3})
-              .animate({"left" : 0}, this.options.animationSpeed, this.resetAndUnlock);
+              .animate({"left" : 0, "opacity" : 1}, this.options.animationSpeed, this.resetAndUnlock);
             this.$slides
               .eq(this.prevActiveSlide)
-              .animate({"left" : -this.orbitWidth}, this.options.animationSpeed);
+              .animate({"left" : -this.orbitWidth}, this.options.animationSpeed, "", function(){
+                $(this).css({"opacity" : 0});
+              });
           }
           if (slideDirection == "prev") {
             this.$slides
               .eq(this.activeSlide)
               .css({"left": -this.orbitWidth, "z-index" : 3})
-              .animate({"left" : 0}, this.options.animationSpeed, this.resetAndUnlock);
+              .animate({"left" : 0, "opacity" : 1}, this.options.animationSpeed, this.resetAndUnlock);
             this.$slides
               .eq(this.prevActiveSlide)
-              .animate({"left" : this.orbitWidth}, this.options.animationSpeed);
+              .animate({"left" : this.orbitWidth}, this.options.animationSpeed, "", function(){
+                $(this).css({"opacity" : 0});
+              });
           }
         }
 
@@ -561,23 +634,33 @@
             this.$slides
               .eq(this.activeSlide)
               .css({top: -this.orbitHeight, "z-index" : 3})
-              .animate({top : 0}, this.options.animationSpeed, this.resetAndUnlock);
+              .css("opacity", 1)
+              .animate({top : 0, "opacity":1}, this.options.animationSpeed, this.resetAndUnlock);
             this.$slides
               .eq(this.prevActiveSlide)
-              .animate({top : this.orbitHeight}, this.options.animationSpeed);
+              .css("opacity", 0)
+              .animate({top : this.orbitHeight}, this.options.animationSpeed, "");
           }
           if (slideDirection == "prev") {
             this.$slides
               .eq(this.activeSlide)
               .css({top: this.orbitHeight, "z-index" : 3})
+              .css("opacity", 1)
               .animate({top : 0}, this.options.animationSpeed, this.resetAndUnlock);
             this.$slides
               .eq(this.prevActiveSlide)
+              .css("opacity", 0)
               .animate({top : -this.orbitHeight}, this.options.animationSpeed);
           }
         }
 
         this.setCaption();
+      }
+
+      // if on last slide and singleCycle is true, don't loop through slides again
+      // .length is zero based so must minus 1 to match activeSlide index
+      if (this.activeSlide === this.$slides.length-1 && this.options.singleCycle) {
+        this.stopClock();
       }
     }
   };
@@ -654,7 +737,7 @@ Commercial use requires attribution.
 
 var Holder = Holder || {};
 (function (app, win) {
-	
+
 var preempted = false,
 fallback = false,
 canvas = document.createElement('canvas');
@@ -785,11 +868,11 @@ app.run = function (o) {
 	var options = extend(settings, o),
 		images = selector(options.images),
 		preempted = true;
-		
+
 	for (var l = images.length, i = 0; i < l; i++) {
 		var theme = settings.themes.gray;
 		var src = images[i].getAttribute("data-src") || images[i].getAttribute("src");
-		if ( !! ~src.indexOf(options.domain)) {
+		if (src && !! ~src.indexOf(options.domain)) {
 			var render = false,
 				dimensions = null,
 				text = null;
@@ -811,16 +894,16 @@ app.run = function (o) {
 				images[i].setAttribute("data-src", src);
 				var dimensions_caption = dimensions.width + "x" + dimensions.height;
 				images[i].setAttribute("alt", text ? text : theme.text ? theme.text + " [" + dimensions_caption + "]" : dimensions_caption);
-				
+
 				// Fallback
         // images[i].style.width = dimensions.width + "px";
         // images[i].style.height = dimensions.height + "px";
 				images[i].style.backgroundColor = theme.background;
-				
+
 				var theme = (text ? extend(theme, {
 						text: text
 					}) : theme);
-				
+
 				if (!fallback) {
 					images[i].setAttribute("src", draw(ctx, dimensions, theme));
 				}
