@@ -88,7 +88,7 @@ if( $test_url !== false ) { // test if the URL exists
 
     function load_external_jQuery() { // load external file  
         wp_deregister_script( 'jquery' ); // deregisters the default WordPress jQuery  
-        wp_register_script('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'); // register the external file  
+        wp_register_script('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js', array(), false, true); // register the external file  
         wp_enqueue_script('jquery'); // enqueue the external file  
     }  
 
@@ -106,14 +106,14 @@ if( $test_url !== false ) { // test if the URL exists
 
 /* load modernizr from foundation */
 function modernize_it(){
-    wp_register_script( 'modernizr', get_template_directory_uri() . '/foundation/javascripts/modernizr.foundation.js' ); 
+    wp_register_script( 'modernizr', get_template_directory_uri() . '/foundation/javascripts/modernizr.foundation.js', array(), false, true); 
     wp_enqueue_script( 'modernizr' );
 }
 add_action( 'wp_enqueue_scripts', 'modernize_it' );
 
 function foundation_js(){
-    wp_register_script( 'foundation-navigation', get_template_directory_uri() . '/foundation/javascripts/jquery.foundation.navigation.js' ); 
-    wp_enqueue_script( 'foundation-navigation', 'jQuery', '1.1', true );
+    wp_register_script( 'foundation-navigation', get_template_directory_uri() . '/foundation/javascripts/jquery.foundation.navigation.js','jQuery', '1.1', true ); 
+    wp_enqueue_script( 'foundation-navigation' );
 }
 add_action('wp_enqueue_scripts', 'foundation_js');
 
@@ -245,7 +245,7 @@ function remove_thumbnail_dimensions( $html ) {
     return $html;
 }
 
-// add the 'has-flyout' class to any li's that have children and add the arrows to li's with children
+// add the 'has-flyout' class to any LIs that have children and add the arrows to LIs with children
 class description_walker extends Walker_Nav_Menu
 {
       function start_el(&$output, $item, $depth, $args)
